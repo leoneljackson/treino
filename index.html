@@ -1,0 +1,474 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ficha de Treino</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: ficha de academia em coluna única. Abas A-D no topo, linha do tempo de 45 min, exercícios que expandem com animação e séries explicadas. */
+:root{
+  --bg:#E9EDF0; --surface:#FFFFFF; --surface2:#F2F5F7; --ink:#10171C; --ink2:#4A5760;
+  --line:#D2D9DE; --accent:#0A7C74; --on-accent:#FFFFFF; --accent-soft:#D6EEEB; --bench:#9AA6AE;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Source Sans 3",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1418; --surface:#182025; --surface2:#1F2A30; --ink:#E8EEF1; --ink2:#9DADB7;
+  --line:#2B373E; --accent:#46D6C8; --on-accent:#06201D; --accent-soft:#14363A; --bench:#55646D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1418; --surface:#182025; --surface2:#1F2A30; --ink:#E8EEF1; --ink2:#9DADB7;
+  --line:#2B373E; --accent:#46D6C8; --on-accent:#06201D; --accent-soft:#14363A; --bench:#55646D; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:0;text-wrap:balance;line-height:1.05}
+h1{font-size:clamp(2.2rem,8vw,3.2rem);font-weight:700}
+.sub{margin:6px 0 0;color:var(--ink2)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.guide{margin:18px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.guide summary{padding:12px 14px;font-weight:600;cursor:pointer}
+.guide dl{margin:0;padding:0 14px 14px;display:grid;gap:10px}
+.guide dt{font-family:var(--f-display);text-transform:uppercase;font-size:1.05rem;letter-spacing:.03em;color:var(--accent)}
+.guide dd{margin:0;color:var(--ink2)}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tab{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 6px;text-align:center;min-width:0}
+.tab b{display:block;font-family:var(--f-display);font-size:1.9rem;line-height:1;letter-spacing:.02em}
+.tab span{display:block;font-size:.72rem;color:var(--ink2);line-height:1.2;margin-top:2px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tab[aria-selected="true"] span{color:var(--on-accent);opacity:.9}
+
+.thead{margin:14px 0 10px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;justify-content:space-between}
+.thead h2{font-size:1.7rem}
+.thead .m{font-family:var(--f-mono);font-size:.8rem;color:var(--ink2)}
+
+.tl{display:flex;gap:2px;height:30px;margin-bottom:6px}
+.tl button{border:0;border-radius:3px;background:var(--accent-soft);color:var(--ink);font-family:var(--f-mono);font-size:.72rem;min-width:0;padding:0;overflow:hidden}
+.tl button:nth-child(even){background:var(--surface2)}
+.tl button:hover{outline:2px solid var(--accent)}
+.tl-cap{font-family:var(--f-mono);font-size:.7rem;color:var(--ink2);display:flex;justify-content:space-between;margin-bottom:14px}
+
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:8px;overflow:hidden}
+.exrow{width:100%;display:grid;grid-template-columns:34px minmax(0,1fr) 20px;gap:10px;align-items:center;text-align:left;background:none;border:0;padding:12px 14px}
+.exn{font-family:var(--f-display);font-size:1.7rem;color:var(--accent);line-height:1}
+.exname{font-weight:600;font-size:1.05rem;line-height:1.25}
+.exmeta{font-family:var(--f-mono);font-size:.74rem;color:var(--ink2);margin-top:2px;overflow-wrap:anywhere}
+.chev{width:12px;height:12px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(45deg);transition:transform .2s}
+.exrow[aria-expanded="true"] .chev{transform:rotate(-135deg)}
+.ex.done .exn::after{content:" ✓"}
+
+.panel{padding:0 14px 16px;display:grid;gap:16px}
+.fig{background:var(--surface2);border-radius:6px;padding:6px;position:relative}
+.fig svg{display:block;width:100%;height:auto;max-height:260px}
+.figcap{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--ink2);padding:2px 6px 4px}
+.figcap a{color:var(--accent);font-weight:600}
+.figcap button{background:none;border:1px solid var(--line);border-radius:4px;padding:2px 8px;font-size:.8rem}
+.mus{font-size:.92rem;color:var(--ink2)}
+.mus b{color:var(--ink)}
+.panel h3{font-size:1.15rem;color:var(--accent);margin-bottom:6px}
+.panel ol,.panel ul{margin:0;padding-left:1.25em;display:grid;gap:4px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.cols>div{min-width:0}
+.tip{background:var(--accent-soft);border-radius:6px;padding:10px 12px;font-size:.95rem}
+
+.sets{display:grid;gap:6px}
+.set{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.set input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent)}
+.set label{display:block;cursor:pointer;min-width:0}
+.set .t{font-weight:600}
+.set .d{display:block;font-size:.88rem;color:var(--ink2)}
+.set .r{font-family:var(--f-mono);font-size:.78rem;color:var(--ink);display:block;margin-top:2px}
+.set input:checked + label .t{text-decoration:line-through;opacity:.6}
+
+.notes{margin-top:26px;display:grid;gap:12px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px}
+.note h2{font-size:1.35rem;margin-bottom:6px}
+.note p{margin:0 0 8px;color:var(--ink2)}
+.note p:last-child{margin:0}
+.note ul{margin:6px 0 0;padding-left:1.2em;color:var(--ink2)}
+
+.ln{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.ln.hl{stroke:var(--accent)}
+.far{opacity:.4}
+.bn{stroke:var(--bench);stroke-width:4;stroke-linecap:round;fill:none}
+.blk{fill:var(--bench)}
+.floor{stroke:var(--line);stroke-width:2}
+.head{fill:var(--surface2);stroke:var(--ink);stroke-width:3}
+.eq{fill:var(--ink)}
+.eqs{fill:none;stroke:var(--ink);stroke-width:3}
+.cab{stroke:var(--ink2);stroke-width:1.5;stroke-dasharray:3 3;fill:none}
+@media (prefers-reduced-motion: reduce){.chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ficha de treino</h1>
+    <p class="sub">4 treinos de 45 minutos. Toque em um exercício para ver como fazer.</p>
+  </header>
+
+  <details class="guide">
+    <summary>Como ler a ficha (para quem está começando)</summary>
+    <dl>
+      <div><dt>Repetição</dt><dd>Uma vez completa do movimento: descer e subir o peso, por exemplo.</dd></div>
+      <div><dt>Série</dt><dd>Um bloco de repetições seguidas, sem parar. Depois você descansa e começa a próxima série.</dd></div>
+      <div><dt>Faixa de repetições (ex.: 8–12)</dt><dd>Escolha um peso com o qual você consiga fazer no mínimo 8 e no máximo 12 repetições bem feitas. Se passar de 12 com facilidade, aumente o peso na próxima série. Se não chegar a 8, diminua.</dd></div>
+      <div><dt>Aquecimento</dt><dd>Série leve, só para preparar músculos e articulações. Ela não serve para cansar. Na primeira, use carga muito leve (10–12 repetições). Na segunda, uma carga intermediária (5–8 repetições).</dd></div>
+      <div><dt>Reconhecimento</dt><dd>Uma série com carga intermediária (5–8 repetições) para sentir o movimento e ter uma ideia do peso certo antes das séries pesadas.</dd></div>
+      <div><dt>Top Set</dt><dd>A série que vale. É feita com a carga de trabalho: pesada o bastante para que as últimas repetições sejam difíceis, mas sempre com a técnica correta. Na segunda Top Set, mantenha a mesma carga ou faça um pequeno ajuste.</dd></div>
+      <div><dt>Descanso</dt><dd>Tempo parado entre uma série e outra. Quando a ficha mostra dois tempos (ex.: 60–90s / 2–3min), o primeiro vale depois do aquecimento e o segundo depois das séries pesadas.</dd></div>
+    </dl>
+  </details>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Treinos"></nav>
+  <main id="app"></main>
+
+  <section class="notes">
+    <div class="note">
+      <h2>Cardio antes da academia</h2>
+      <p>Cardio leve ou moderado: pode seguir normalmente.</p>
+      <p>Corrida forte, HIIT ou treino longo: evite fazer logo antes do Treino B ou D, porque o cansaço reduz seu rendimento justamente nos exercícios de perna.</p>
+      <p>Ordem ideal: cardio, depois deslocamento e recuperação, depois musculação. Evite cardio intenso, chegar correndo e ir direto para o agachamento pesado.</p>
+    </div>
+    <div class="note">
+      <h2>Regra da ficha</h2>
+      <p>As séries de aquecimento não são para fadigar o músculo. Elas servem para chegar preparado ao Top Set.</p>
+      <p>Exemplo no agachamento:</p>
+      <ul>
+        <li>Série 1: carga muito leve, 10–12 repetições</li>
+        <li>Série 2: carga intermediária, 5–8 repetições</li>
+        <li>Top Set 1: carga de trabalho, 8–12 repetições</li>
+        <li>Top Set 2: mesma carga ou pequeno ajuste, 8–12 repetições</li>
+      </ul>
+      <p style="margin-top:8px">Assim você usa os 45 minutos quase inteiros para musculação, com os exercícios principais em primeiro lugar.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ---------- DADOS ---------- */
+const P=(h,t,u,f,legs)=>({h,t,u,f,legs});
+const TREINOS=[
+{id:'a',letra:'A',nome:'Peito, ombro e tríceps',curto:'Peito · Ombro · Tríceps',ex:[
+ {n:'Supino inclinado com halteres',ini:0,fim:10,sets:['aq1','aq2','top','top'],reps:'8–12',rest:'60–90s / 2–3min',
+  musc:'Peito (parte de cima), ombros e tríceps',
+  passos:['Ajuste o banco numa inclinação leve (cerca de 30°). Sente com as costas bem apoiadas e os pés firmes no chão.','Comece com os halteres na altura do peito, com os cotovelos um pouco abaixo dos ombros.','Empurre os halteres para cima até quase esticar os braços, sem bater um no outro.','Desça devagar (2 a 3 segundos) até sentir o peito esticar.'],
+  erros:['Arquear demais as costas ou tirar o bumbum do banco.','Descer rápido e deixar o peso "cair".'],
+  dica:'Pense em aproximar as mãos lá em cima, como se abraçasse uma árvore.',
+  an:{bench:1,eq:'db',hl:'arm',a:P([130,100],-150,-80,-85,[[176,140]]),b:P([130,100],-150,70,-80,[[176,140]])}},
+ {n:'Supino reto na máquina',ini:10,fim:16,sets:['top','top'],reps:'8–12',rest:'2min',
+  musc:'Peito, tríceps e ombros',
+  passos:['Ajuste o banco para que as pegadas fiquem na altura do meio do peito.','Cole as costas no encosto e puxe os ombros para trás e para baixo.','Empurre as manoplas para frente até quase esticar os braços.','Volte devagar, sem deixar as placas de peso baterem.'],
+  erros:['Deixar os ombros subirem até as orelhas.','Soltar o peso na volta em vez de controlar.'],
+  dica:'Mantenha os ombros "travados" para trás durante toda a série.',
+  an:{bench:1,eq:'grip',hl:'arm',a:P([110,100],-92,-5,-5,[[150,140]]),b:P([110,100],-92,140,-5,[[150,140]])}},
+ {n:'Crucifixo inclinado no cabo',ini:16,fim:21,sets:['top','top'],reps:'10–12',rest:'90s',
+  musc:'Peito (parte de cima)',
+  passos:['Posicione o banco inclinado entre as duas polias baixas.','Segure uma manopla em cada mão, com os cotovelos levemente dobrados.','Abra os braços em arco até sentir o peito esticar.','Feche trazendo as mãos juntas na frente do peito e aperte por um instante.'],
+  erros:['Dobrar e esticar os cotovelos a cada repetição (vira um supino).','Usar carga alta demais: quem sofre é o ombro.'],
+  dica:'O ângulo do cotovelo fica sempre o mesmo. Só os ombros se movem.',
+  an:{bench:1,eq:'grip',hl:'arm',cable:[80,141],a:P([130,100],-150,-85,-85,[[176,140]]),b:P([130,100],-150,100,90,[[176,140]])}},
+ {n:'Desenvolvimento com halteres',ini:21,fim:28,sets:['rec','top','top'],reps:'8–12',rest:'90–120s',
+  musc:'Ombros e tríceps',
+  passos:['Sente com as costas apoiadas. Leve os halteres à altura das orelhas.','Mantenha os cotovelos levemente à frente do corpo.','Empurre para cima até quase esticar os braços.','Desça controlando até voltar à altura das orelhas.'],
+  erros:['Arquear a lombar para ajudar a subir.','Não descer o suficiente (movimento curto).'],
+  dica:'Contraia a barriga, como se fosse receber um soco leve.',
+  an:{bench:1,eq:'db',hl:'arm',a:P([110,100],-92,-90,-90,[[150,140]]),b:P([110,100],-92,100,-85,[[150,140]])}},
+ {n:'Elevação lateral',ini:28,fim:33,sets:['top','top','top'],reps:'12–15',rest:'60–75s',
+  musc:'Ombros (parte do meio)',
+  passos:['Em pé, com um haltere em cada mão ao lado do corpo e os cotovelos levemente dobrados.','Levante os braços para os lados até a altura dos ombros.','Segure 1 segundo no alto.','Desça devagar, em 2 a 3 segundos.'],
+  erros:['Balançar o corpo para ajudar a subir.','Encolher os ombros em direção às orelhas.'],
+  dica:'Pense em levar os cotovelos para cima, não as mãos. Use peso leve e boa técnica. A animação mostra o corpo de lado: no movimento real os braços sobem para os lados.',
+  an:{eq:'db',hl:'arm',a:P([110,72],-90,92,88,[[110,140]]),b:P([110,72],-90,-10,-5,[[110,140]])}},
+ {n:'Tríceps no pulley',ini:33,fim:39,sets:['top','top'],reps:'8–12',rest:'60–90s',
+  musc:'Tríceps (parte de trás do braço)',
+  passos:['Em pé, de frente para a polia alta. Cole os cotovelos nas costelas.','Empurre a barra ou corda para baixo até esticar os braços por completo.','Volte devagar até o antebraço ficar quase paralelo ao chão.'],
+  erros:['Abrir ou levantar os cotovelos durante o movimento.','Inclinar o corpo sobre a barra para ajudar com o peso.'],
+  dica:'Só o antebraço se mexe. O braço fica parado, colado ao corpo.',
+  an:{eq:'grip',hl:'arm',cable:[136,4],a:P([110,72],-88,95,-20,[[110,140]]),b:P([110,72],-88,95,85,[[110,140]])}},
+ {n:'Tríceps testa com barra W',ini:39,fim:45,sets:['top','top'],reps:'8–12',rest:'60–90s',
+  musc:'Tríceps (parte de trás do braço)',
+  passos:['Deite no banco reto segurando a barra W com os braços esticados sobre o peito.','Dobre somente os cotovelos, levando a barra em direção à testa ou um pouco atrás da cabeça.','Estique os braços de volta, sem mexer os ombros.'],
+  erros:['Abrir os cotovelos para os lados.','Descer rápido: comece leve para pegar o jeito.'],
+  dica:'Os cotovelos apontam para o teto e ficam parados. Se possível, peça para alguém ficar por perto nas séries pesadas.',
+  an:{bench:1,eq:'bar',hl:'arm',a:P([150,105],180,-90,-90,[[184,140]]),b:P([150,105],180,-90,-200,[[184,140]])}}
+]},
+{id:'b',letra:'B',nome:'Quadríceps e panturrilhas',curto:'Quadríceps · Panturrilhas',ex:[
+ {n:'Cadeira extensora',ini:0,fim:8,sets:['aq1','aq2','top','top'],reps:'12–15',rest:'60–90s / 2min',
+  musc:'Quadríceps (frente da coxa)',
+  passos:['Ajuste o encosto para que o joelho fique alinhado com o eixo da máquina.','Apoie a almofada na parte de baixo da canela, perto do pé.','Estique as pernas até ficarem quase retas e segure 1 segundo.','Desça devagar, sem deixar as placas baterem.'],
+  erros:['Chutar o peso com impulso.','Levantar o quadril do assento.'],
+  dica:'Aperte bem a coxa lá em cima. É isso que faz o músculo trabalhar.',
+  an:{bench:1,eq:'none',hl:'leg',a:P([110,100],-92,60,10,[[144,134]]),b:P([110,100],-92,60,10,[[176,100]])}},
+ {n:'Agachamento / Hack',ini:8,fim:18,sets:['rec','top','top'],reps:'8–12',rest:'2–3min',
+  musc:'Quadríceps e glúteos',
+  passos:['Pés na largura dos ombros, pontas levemente abertas.','Desça levando o quadril para trás e dobrando os joelhos, que seguem a direção dos pés.','Desça até a coxa ficar perto de paralela ao chão, no ponto em que você mantém o controle.','Suba empurrando o chão com os pés inteiros.'],
+  erros:['Joelhos caindo para dentro.','Calcanhares saindo do chão.'],
+  dica:'No hack, a máquina guia o movimento: mantenha as costas coladas no encosto. Este é o exercício mais pesado do dia, então descanse até 3 minutos. A animação mostra o agachamento livre.',
+  an:{eq:'bar',hl:'leg',a:P([110,72],-90,100,-60,[[110,140]]),b:P([88,102],-62,100,-60,[[110,140]])}},
+ {n:'Leg press 45°',ini:18,fim:27,sets:['top','top','top'],reps:'10–12',rest:'2min',
+  musc:'Quadríceps e glúteos',
+  passos:['Apoie os pés na plataforma, na largura dos ombros e na altura do meio.','Solte as travas e desça até os joelhos formarem cerca de 90°.','Empurre a plataforma sem esticar os joelhos até travar.'],
+  erros:['Travar os joelhos no alto.','Deixar o quadril descolar do banco na descida, curvando a lombar.'],
+  dica:'Empurre pelo calcanhar e pelo meio do pé, não pela ponta.',
+  an:{bench:1,eq:'none',hl:'leg',a:P([90,110],-145,50,10,[[138,66]]),b:P([90,110],-145,50,10,[[117,87]])}},
+ {n:'Afundo / Passada',ini:27,fim:34,sets:['top','top'],reps:'10 por perna',rest:'90s',
+  musc:'Coxas e glúteos',
+  passos:['Em pé, com um haltere em cada mão e um pé à frente do outro.','Desça dobrando os dois joelhos até o joelho de trás quase tocar o chão.','Empurre pelo pé da frente para subir.','Faça as 10 repetições de um lado e depois troque de perna.'],
+  erros:['Inclinar o tronco para frente.','Passo curto demais, que carrega o joelho.'],
+  dica:'Olhar para um ponto fixo à frente ajuda no equilíbrio.',
+  an:{eq:'db',hl:'leg',a:P([100,75],-90,90,90,[[118,140],[82,140]]),b:P([100,108],-90,90,90,[[125,140],[65,140]])}},
+ {n:'Panturrilha sentada',ini:34,fim:45,sets:['work','work','work','work'],reps:'15–20',rest:'60s',
+  musc:'Panturrilha (parte profunda)',
+  passos:['Sente com a almofada apoiada sobre os joelhos e a ponta dos pés na plataforma.','Deixe os calcanhares descerem até sentir a panturrilha esticar.','Suba o máximo que conseguir, na ponta dos pés, e segure 1 segundo.'],
+  erros:['Fazer o movimento curto.','Quicar em vez de controlar a subida e a descida.'],
+  dica:'Panturrilha responde bem a movimento lento e completo.',
+  an:{block:[84,110,32,8],eq:'none',hl:'leg',a:P([100,104],-90,60,80,[[134,138]]),b:P([100,104],-90,60,80,[[134,130]])}}
+]},
+{id:'c',letra:'C',nome:'Costas e bíceps',curto:'Costas · Bíceps',ex:[
+ {n:'Puxada alta',ini:0,fim:10,sets:['aq1','aq2','top','top'],reps:'8–12',rest:'60–90s / 2–3min',
+  musc:'Costas (dorsais) e bíceps',
+  passos:['Sente com as coxas presas sob as almofadas e segure a barra um pouco mais aberto que os ombros.','Incline o tronco levemente para trás e olhe para frente.','Puxe a barra até a parte de cima do peito, levando os cotovelos para baixo e para trás.','Volte esticando os braços devagar.'],
+  erros:['Balançar o tronco para trás para puxar.','Puxar a barra atrás da nuca.'],
+  dica:'Pense em puxar com os cotovelos, não com as mãos.',
+  an:{bench:1,eq:'grip',hl:'arm',cable:[150,4],a:P([110,100],-100,-75,-75,[[150,140]]),b:P([110,100],-100,105,-50,[[150,140]])}},
+ {n:'Remada curvada',ini:10,fim:17,sets:['top','top'],reps:'8–12',rest:'2–3min',
+  musc:'Costas, bíceps e lombar',
+  passos:['Pés na largura do quadril, joelhos levemente dobrados, barra nas mãos.','Incline o tronco para frente (cerca de 45°) com as costas retas.','Puxe a barra até a barriga, levando os cotovelos para trás.','Desça controlando até esticar os braços.'],
+  erros:['Arredondar as costas.','Usar impulso do tronco para subir a barra.'],
+  dica:'Olhe para o chão, um pouco à frente, para manter o pescoço alinhado.',
+  an:{eq:'bar',hl:'arm',a:P([82,82],-20,90,90,[[90,140]]),b:P([82,82],-20,160,70,[[90,140]])}},
+ {n:'Remada baixa',ini:17,fim:23,sets:['top','top'],reps:'10–12',rest:'2min',
+  musc:'Costas (parte do meio)',
+  passos:['Sente com os pés apoiados, joelhos levemente dobrados e costas retas.','Puxe a manopla até a barriga, mantendo os cotovelos perto do corpo.','Junte as omoplatas no final do movimento.','Volte esticando os braços devagar, sem curvar as costas.'],
+  erros:['Jogar o tronco para trás.','Subir os ombros durante a puxada.'],
+  dica:'Imagine que você quer segurar um lápis entre as omoplatas.',
+  an:{bench:1,eq:'grip',hl:'arm',cable:[236,124],a:P([100,100],-90,20,20,[[156,126]]),b:P([100,100],-90,160,40,[[156,126]])}},
+ {n:'Pulldown na corda',ini:23,fim:28,sets:['top','top'],reps:'12',rest:'60–90s',
+  musc:'Costas (dorsais)',
+  passos:['Em pé, de frente para a polia alta, com a corda nas mãos e os braços quase esticados.','Incline levemente o tronco para frente.','Puxe a corda para baixo até as coxas, sem dobrar os cotovelos.','Volte devagar até sentir as costas esticarem.'],
+  erros:['Dobrar os cotovelos (o exercício vira tríceps).','Balançar o corpo.'],
+  dica:'Imagine que seus braços são cordas esticadas e as costas fazem a força.',
+  an:{eq:'grip',hl:'arm',cable:[150,4],a:P([110,72],-80,-35,-35,[[110,140]]),b:P([110,72],-80,80,80,[[110,140]])}},
+ {n:'Rosca direta com barra W',ini:28,fim:37,sets:['rec','top','top'],reps:'8–12',rest:'90s',
+  musc:'Bíceps (frente do braço)',
+  passos:['Em pé, com a barra W e as palmas das mãos viradas para cima.','Cole os cotovelos ao corpo.','Dobre os cotovelos até a barra chegar perto dos ombros.','Desça devagar até esticar os braços.'],
+  erros:['Balançar o tronco para frente e para trás.','Deixar os cotovelos irem para frente.'],
+  dica:'Se precisou balançar o corpo para subir, o peso está alto demais.',
+  an:{eq:'bar',hl:'arm',a:P([110,72],-90,92,90,[[110,140]]),b:P([110,72],-90,95,-80,[[110,140]])}},
+ {n:'Rosca alternada no banco inclinado',ini:37,fim:45,sets:['top','top'],reps:'10 por braço',rest:'60–90s',
+  musc:'Bíceps, com bom alongamento',
+  passos:['Sente no banco inclinado com os braços pendurados atrás do corpo, um haltere em cada mão.','Suba um haltere girando a palma para cima.','Desça devagar até esticar o braço por completo.','Alterne os braços. Faça 10 de cada lado.'],
+  erros:['Levar o cotovelo para frente durante a subida.','Soltar o peso rápido na descida.'],
+  dica:'O alongamento na parte de baixo é o que torna este exercício bom. Não encurte a descida.',
+  an:{bench:1,eq:'db',hl:'arm',a:P([120,104],-120,95,90,[[166,140]]),b:P([120,104],-120,95,-50,[[166,140]])}}
+]},
+{id:'d',letra:'D',nome:'Posterior, glúteos e ombro posterior',curto:'Posterior · Glúteos · Ombro',ex:[
+ {n:'Cadeira flexora',ini:0,fim:8,sets:['aq1','aq2','top','top'],reps:'12–15',rest:'60–90s / 2min',
+  musc:'Posterior de coxa (parte de trás da coxa)',
+  passos:['Sente e ajuste a almofada logo acima do calcanhar.','Puxe os calcanhares para baixo e para trás, dobrando os joelhos.','Segure 1 segundo e volte devagar.'],
+  erros:['Tirar o quadril do assento.','Fazer rápido, sem controle.'],
+  dica:'Mantenha o quadril bem encaixado no assento durante toda a série.',
+  an:{bench:1,eq:'none',hl:'leg',a:P([110,100],-92,60,10,[[174,106]]),b:P([110,100],-92,60,10,[[130,138]])}},
+ {n:'Stiff',ini:8,fim:18,sets:['rec','top','top'],reps:'8–12',rest:'2–3min',
+  musc:'Posterior de coxa, glúteos e lombar',
+  passos:['Em pé, com a barra à frente das coxas e os joelhos levemente dobrados. Eles ficam assim durante o movimento.','Leve o quadril para trás e desça a barra rente às pernas.','Pare quando sentir a parte de trás da coxa esticar, perto da altura do joelho.','Suba empurrando o quadril para frente.'],
+  erros:['Arredondar as costas.','Dobrar os joelhos como se fosse agachar.'],
+  dica:'Pense em fechar uma porta com o bumbum.',
+  an:{eq:'bar',hl:'leg',a:P([110,72],-90,90,90,[[110,140]]),b:P([88,76],-30,90,90,[[110,140]])}},
+ {n:'Mesa flexora',ini:18,fim:24,sets:['top','top'],reps:'10–12',rest:'90s',
+  musc:'Posterior de coxa',
+  passos:['Deite de bruços e apoie a almofada logo acima dos calcanhares.','Dobre os joelhos levando os calcanhares em direção ao bumbum.','Volte devagar até quase esticar as pernas.'],
+  erros:['Levantar o quadril do banco.','Usar peso demais e perder o controle.'],
+  dica:'Mantenha o quadril pressionado contra o banco.',
+  an:{bench:1,eq:'none',hl:'leg',a:P([150,104],180,170,170,[[217,104,1]]),b:P([150,104],180,170,170,[[176,74,1]])}},
+ {n:'Elevação pélvica',ini:24,fim:32,sets:['top','top','top'],reps:'10–12',rest:'90–120s',
+  musc:'Glúteos',
+  passos:['Apoie a parte de cima das costas num banco, com os pés no chão e os joelhos dobrados.','Coloque a barra ou o peso sobre o quadril (use uma almofada para proteger).','Empurre o quadril para cima até o corpo formar uma linha do ombro ao joelho.','Aperte os glúteos 1 segundo e desça controlando.'],
+  erros:['Arquear a lombar no topo.','Pés longe ou perto demais do bumbum.'],
+  dica:'Queixo levemente recolhido e olhar para frente. Empurre pelos calcanhares.',
+  an:{block:[62,112,50,31],eq:'none',hl:'leg',a:P([132,128],-145,30,20,[[168,140]]),b:P([132,100],-186,30,20,[[168,140]])}},
+ {n:'Crucifixo inverso',ini:32,fim:38,sets:['top','top','top'],reps:'12–15',rest:'60–75s',
+  musc:'Ombro posterior (parte de trás do ombro)',
+  passos:['Sente na máquina de frente para o apoio, ou incline o tronco com halteres.','Com os cotovelos levemente dobrados, abra os braços para os lados e para trás.','Pare na altura dos ombros e volte devagar.'],
+  erros:['Usar peso alto e puxar com as costas.','Encolher os ombros.'],
+  dica:'Peso leve e movimento controlado funcionam melhor aqui. A animação mostra o corpo de lado: no movimento real os braços abrem para os lados.',
+  an:{eq:'db',hl:'arm',a:P([82,82],-20,90,90,[[90,140]]),b:P([82,82],-20,30,10,[[90,140]])}},
+ {n:'Panturrilha em pé',ini:38,fim:45,sets:['work','work','work','work'],reps:'15',rest:'45–60s',
+  musc:'Panturrilha (parte mais visível)',
+  passos:['Apoie a ponta dos pés num degrau ou plataforma, com os joelhos esticados.','Deixe os calcanhares descerem para esticar a panturrilha.','Suba o máximo possível e segure 1 segundo.'],
+  erros:['Dobrar os joelhos para ajudar.','Fazer o movimento curto.'],
+  dica:'Segure em algum apoio para manter o equilíbrio e foque na subida alta.',
+  an:{eq:'none',hl:'leg',a:P([110,74],-90,80,90,[[110,142]]),b:P([110,66],-90,80,90,[[110,134]])}}
+]}
+];
+
+/* ---------- SÉRIES ---------- */
+const SETDEF={
+ aq1:{t:'Aquecimento',d:'Carga muito leve. Só para preparar o corpo.',r:'10–12'},
+ aq2:{t:'Aquecimento 2 (reconhecimento)',d:'Carga intermediária. Sinta o movimento e ajuste o peso.',r:'5–8'},
+ rec:{t:'Reconhecimento',d:'Carga intermediária. Sinta o movimento antes das séries pesadas.',r:'5–8'},
+ top:{t:'Top Set',d:'Carga de trabalho. A série que vale: difícil no final, com técnica boa.',r:null},
+ work:{t:'Série de trabalho',d:'Movimento completo e controlado, sem pressa.',r:null}
+};
+function restFor(rest,tipo){
+  if(rest.indexOf('/')<0) return rest;
+  const p=rest.split('/').map(s=>s.trim());
+  return (tipo==='top'||tipo==='work')?p[1]:p[0];
+}
+function setLine(rest,reps,tipo){
+  const d=SETDEF[tipo]; const r=d.r||reps;
+  return {t:d.t,d:d.d,r:r+' repetições · descanso '+restFor(rest,tipo)};
+}
+function fmt(m){return String(Math.floor(m)).padStart(2,'0')+':00'}
+
+/* ---------- ANIMAÇÃO (esquemática, de lado) ---------- */
+const L1=34,L2=34,LT=38,LU=26,LF=24,FLOOR=143;
+const rad=d=>d*Math.PI/180, lerp=(a,b,t)=>a+(b-a)*t;
+function ik(h,a,s){
+  let dx=a[0]-h[0],dy=a[1]-h[1],d=Math.hypot(dx,dy)||1;
+  const mx=L1+L2-0.01; const ux=dx/d,uy=dy/d;
+  if(d>mx)d=mx;
+  const an=[h[0]+ux*d,h[1]+uy*d];
+  const hh=Math.sqrt(Math.max(0,L1*L1-(d/2)*(d/2)));
+  const k=[h[0]+ux*d/2+(-uy)*hh*s, h[1]+uy*d/2+ux*hh*s];
+  return {k,a:an};
+}
+const pt=p=>p[0].toFixed(1)+','+p[1].toFixed(1);
+function benchSvg(A){
+  const th=rad(A.t),tx=Math.cos(th),ty=Math.sin(th),nx=Math.sin(th),ny=-Math.cos(th),[hx,hy]=A.h;
+  const x1=hx+nx*8-tx*10,y1=hy+ny*8-ty*10,x2=hx+nx*8+tx*(LT+10),y2=hy+ny*8+ty*(LT+10);
+  return `<line class="bn" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`+
+   `<line class="bn" x1="${hx-12}" y1="${hy+9}" x2="${hx+38}" y2="${hy+9}"/>`+
+   `<line class="bn" x1="${hx+6}" y1="${hy+9}" x2="${hx+6}" y2="${FLOOR}"/>`;
+}
+function frame(an,p){
+  const A=an.a,B=an.b;
+  const h=[lerp(A.h[0],B.h[0],p),lerp(A.h[1],B.h[1],p)];
+  const tt=rad(lerp(A.t,B.t,p)),u=rad(lerp(A.u,B.u,p)),f=rad(lerp(A.f,B.f,p));
+  const S=[h[0]+LT*Math.cos(tt),h[1]+LT*Math.sin(tt)];
+  const hd=[S[0]+13*Math.cos(tt),S[1]+13*Math.sin(tt)];
+  const E=[S[0]+LU*Math.cos(u),S[1]+LU*Math.sin(u)];
+  const W=[E[0]+LF*Math.cos(f),E[1]+LF*Math.sin(f)];
+  const hlA=an.hl==='arm'?' hl':'', hlL=an.hl==='leg'?' hl':'';
+  let o=`<line class="floor" x1="8" y1="${FLOOR}" x2="232" y2="${FLOOR}"/>`;
+  if(an.bench)o+=benchSvg(A);
+  if(an.block){const b=an.block;o+=`<rect class="blk" x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}" rx="3"/>`}
+  if(an.cable)o+=`<line class="cab" x1="${pt(W).split(',')[0]}" y1="${pt(W).split(',')[1]}" x2="${an.cable[0]}" y2="${an.cable[1]}"/>`;
+  for(let i=A.legs.length-1;i>=0;i--){
+    const la=A.legs[i],lb=B.legs[i];
+    const ank=[lerp(la[0],lb[0],p),lerp(la[1],lb[1],p)];
+    const r=ik(h,ank,la[2]===undefined?-1:la[2]);
+    o+=`<g class="${i?'far':''}"><polyline class="ln${hlL}" points="${pt(h)} ${pt(r.k)} ${pt(r.a)}"/>`+
+       `<polyline class="ln${hlL}" points="${pt(r.a)} ${(r.a[0]+10).toFixed(1)},${(r.a[1]+2).toFixed(1)}"/></g>`;
+  }
+  o+=`<line class="ln${an.hl==='torso'?' hl':''}" x1="${pt(h).split(',')[0]}" y1="${pt(h).split(',')[1]}" x2="${pt(S).split(',')[0]}" y2="${pt(S).split(',')[1]}"/>`;
+  o+=`<circle class="head" cx="${hd[0].toFixed(1)}" cy="${hd[1].toFixed(1)}" r="9"/>`;
+  o+=`<polyline class="ln${hlA}" points="${pt(S)} ${pt(E)} ${pt(W)}"/>`;
+  const wx=W[0].toFixed(1),wy=W[1].toFixed(1);
+  if(an.eq==='db')o+=`<circle class="eq" cx="${wx}" cy="${wy}" r="5.5"/>`;
+  if(an.eq==='bar')o+=`<circle class="eqs" cx="${wx}" cy="${wy}" r="8"/><circle class="eq" cx="${wx}" cy="${wy}" r="2.5"/>`;
+  if(an.eq==='grip')o+=`<circle class="eq" cx="${wx}" cy="${wy}" r="3.5"/>`;
+  return o;
+}
+const ease=ts=>{const c=0.5-0.5*Math.cos(ts*2*Math.PI/3.6);const x=Math.min(1,Math.max(0,(c-0.08)/0.84));return x*x*(3-2*x)};
+
+const live=new Map(); let running=false;
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(ts){
+  live.forEach(o=>{o.svg.innerHTML=frame(o.an,ease(ts/1000))});
+  if(live.size)requestAnimationFrame(loop);else running=false;
+}
+function startLive(id,svg,an){
+  if(reduce){svg.innerHTML=frame(an,0);svg.dataset.pos='0';return}
+  live.set(id,{svg,an});
+  if(!running){running=true;requestAnimationFrame(loop)}
+}
+
+/* ---------- ESTADO (marcações por aparelho) ---------- */
+const store={
+  get(k){try{return localStorage.getItem(k)==='1'}catch(e){return false}},
+  set(k,v){try{v?localStorage.setItem(k,'1'):localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ---------- INTERFACE ---------- */
+const $app=document.getElementById('app'), $tabs=document.getElementById('tabs');
+let cur='a';
+function exId(t,i){return t.id+(i+1)}
+function renderTabs(){
+  $tabs.innerHTML=TREINOS.map(t=>`<button class="tab" role="tab" data-t="${t.id}" aria-selected="${t.id===cur}"><b>${t.letra}</b><span>${t.curto}</span></button>`).join('');
+}
+function exHtml(t,e,i){
+  const id=exId(t,i);
+  const sets=e.sets.map((tp,j)=>{const l=setLine(e.rest,e.reps,tp);const k=`ficha:${id}:${j}`;
+    return `<div class="set"><input type="checkbox" id="${id}-s${j}" data-k="${k}" data-ex="${id}" ${store.get(k)?'checked':''}><label for="${id}-s${j}"><span class="t">Série ${j+1} · ${l.t}</span><span class="d">${l.d}</span><span class="r">${l.r}</span></label></div>`}).join('');
+  const q=encodeURIComponent('como fazer '+e.n+' execução correta');
+  const total=e.sets.length;
+  return `<article class="ex" id="${id}" data-id="${id}">
+   <button class="exrow" aria-expanded="false" aria-controls="${id}-p">
+     <span class="exn">${i+1}</span>
+     <span><span class="exname">${e.n}</span><span class="exmeta" style="display:block">${total} séries · ${e.reps} rep. · descanso ${e.rest} · ${fmt(e.ini)}–${fmt(e.fim)}</span></span>
+     <span class="chev" aria-hidden="true"></span>
+   </button>
+   <div class="panel" id="${id}-p" hidden>
+     <div class="fig"><svg viewBox="0 0 240 150" role="img" aria-label="Animação esquemática do exercício ${e.n}, vista de lado"></svg>
+       <div class="figcap"><span>Animação esquemática, vista de lado</span><span>${reduce?'<button type="button" data-flip>Ver outra posição</button> ':''}<a href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">Ver vídeo real</a></span></div></div>
+     <p class="mus"><b>Músculos:</b> ${e.musc}</p>
+     <div><h3>Suas séries</h3><div class="sets">${sets}</div></div>
+     <div class="cols">
+       <div><h3>Como fazer</h3><ol>${e.passos.map(s=>`<li>${s}</li>`).join('')}</ol></div>
+       <div><h3>Erros comuns</h3><ul>${e.erros.map(s=>`<li>${s}</li>`).join('')}</ul></div>
+     </div>
+     <div class="tip"><b>Dica:</b> ${e.dica}</div>
+   </div>
+  </article>`;
+}
+function renderTreino(){
+  live.clear();
+  const t=TREINOS.find(x=>x.id===cur);
+  const tl=t.ex.map((e,i)=>`<button style="flex:${e.fim-e.ini}" data-go="${exId(t,i)}" title="${e.n}, ${fmt(e.ini)} a ${fmt(e.fim)}" aria-label="${e.n}, ${fmt(e.ini)} a ${fmt(e.fim)}">${i+1}</button>`).join('');
+  $app.innerHTML=`<div class="thead"><h2>Treino ${t.letra} · ${t.nome}</h2><span class="m">${t.ex.length} exercícios · 45 min</span></div>
+   <div class="tl" aria-label="Cronograma do treino">${tl}</div>
+   <div class="tl-cap"><span>00:00</span><span>cronograma · toque para abrir</span><span>45:00</span></div>
+   ${t.ex.map((e,i)=>exHtml(t,e,i)).join('')}`;
+  t.ex.forEach((e,i)=>refreshDone(exId(t,i)));
+}
+function refreshDone(id){
+  const a=document.getElementById(id); if(!a)return;
+  const boxes=a.querySelectorAll('input[type=checkbox]');
+  a.classList.toggle('done',boxes.length>0&&[...boxes].every(b=>b.checked));
+}
+function toggle(art,open){
+  const btn=art.querySelector('.exrow'),panel=art.querySelector('.panel'),svg=art.querySelector('svg');
+  const t=TREINOS.find(x=>x.id===cur);
+  const idx=[...art.parentNode.querySelectorAll('.ex')].indexOf(art);
+  const an=t.ex[idx].an;
+  if(open===undefined)open=btn.getAttribute('aria-expanded')!=='true';
+  btn.setAttribute('aria-expanded',open);panel.hidden=!open;
+  if(open)startLive(art.id,svg,an);else live.delete(art.id);
+}
+document.addEventListener('click',ev=>{
+  const tab=ev.target.closest('.tab');
+  if(tab){cur=tab.dataset.t;renderTabs();renderTreino();return}
+  const go=ev.target.closest('[data-go]');
+  if(go){const a=document.getElementById(go.dataset.go);toggle(a,true);a.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});return}
+  const flip=ev.target.closest('[data-flip]');
+  if(flip){const art=flip.closest('.ex'),svg=art.querySelector('svg'),t=TREINOS.find(x=>x.id===cur);
+    const idx=[...art.parentNode.querySelectorAll('.ex')].indexOf(art);
+    const np=svg.dataset.pos==='1'?0:1;svg.dataset.pos=String(np);svg.innerHTML=frame(t.ex[idx].an,np);return}
+  const row=ev.target.closest('.exrow');
+  if(row)toggle(row.closest('.ex'));
+});
+document.addEventListener('change',ev=>{
+  const c=ev.target.closest('input[data-k]');
+  if(c){store.set(c.dataset.k,c.checked);refreshDone(c.dataset.ex)}
+});
+renderTabs();renderTreino();
+</script>
+
+</body></html>
